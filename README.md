@@ -4,8 +4,8 @@ The trajectory of table tennis balls is affected by the gravitational force, lif
 
 
 Milestones:
-[] Simulation of flight in 2D (without spin)
-[] Simulation of flight in 2D (with topspin and backspin)
-[] Simulation of flight trajectory in 3D
-[] Simulation of flight trajectory in 3D with sidespin, topspin and backspin
-[] Make modifications to the bounce, taking into account the dissipation of energy in form of heat and sound. 
+- [] Simulation of flight in 2D (without spin)
+- [] Simulation of flight in 2D (with topspin and backspin)
+- [] Simulation of flight trajectory in 3D
+- [] Simulation of flight trajectory in 3D with sidespin, topspin and backspin
+- [] Make modifications to the bounce, taking into account the dissipation of energy in form of heat and sound. 
