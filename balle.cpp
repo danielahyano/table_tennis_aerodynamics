@@ -24,16 +24,15 @@ int main() {
   double grav = 9.81;    // Gravitational acceleration (m/s^2)
   double mass = 0.145;   // Mass of projectile (kg)
   double airFlag, rho;
-  cout << "Air resistance? (Yes:1, No:0): "; cin >> airFlag;
+  airFlag = 1;
   if( airFlag == 0 )
     rho = 0;      // No air resistance
   else
     rho = 1.2;    // Density of air (kg/m^3)
   double air_const = -0.5*Cd*rho*area/mass;  // Air resistance constant
 
-  //* Loop until ball hits ground or max steps completed
-  double tau;
-  cout << "Enter timestep, tau (sec): "; cin >> tau;
+  //* Loop until ball hits table or max steps completed
+  double tau = 0.001;
   int iStep, maxStep = 1000;   // Maximum number of steps
   double *xplot, *yplot, *xNoAir, *yNoAir;
   xplot = new double [maxStep+1];  yplot = new double [maxStep+1];
@@ -59,10 +58,15 @@ int main() {
     v[1] += tau*accel[1];     
     v[2] += tau*accel[2];     
   
-    //* If ball reaches ground (y<0), break out of the loop
-    if( r[2] < 0 )  {
+    //* If ball reaches table (y<0.75), use conservation of energy to change direction
+    if( r[2] < 0.75 )  {
+      v[2] = -v[2];             
+    } 
+
+    //* If ball reaches end of the table (x>2.7), break
+    if( r[1] > 2.7 )  {
       xplot[iStep+1] = r[1];  // Record last values computed
-	  yplot[iStep+1] = r[2];
+	    yplot[iStep+1] = r[2];
       break;                  // Break out of the for loop
     } 
   }
