@@ -36,7 +36,7 @@ int main() {
   r[1] = r1[1];  r[2] = r1[2];  r[3]=r1[3]; // Set initial position and velocity
   v[1] = v1[1];  v[2] = v1[2];  v[3]=v1[3];          
   // set initial spin 
-  w[1] = 20000; w[2] = -2000; w[3]=0;
+  w[1] = 20; w[2] = -20; w[3]=0;
 
   //* Set physical parameters (mass, Cd, etc.)
   double Cd = 0.155;      // Drag coefficient (dimensionless)
@@ -65,7 +65,11 @@ int main() {
   double tau = 0.001;
   int iStep, maxStep = 1000;   // Maximum number of steps
   double *xplot, *yplot, *xNoAir, *yNoAir, *zplot, *zNoAir;
+  double *vxplot, *vyplot,*vzplot; 
+  double *wxplot, *wyplot,*wzplot; 
   xplot = new double [maxStep+1];  yplot = new double [maxStep+1]; zplot = new double [maxStep+1];
+  vxplot = new double [maxStep+1];  vyplot = new double [maxStep+1]; vzplot = new double [maxStep+1];
+  wxplot = new double [maxStep+1];  wyplot = new double [maxStep+1]; wzplot = new double [maxStep+1];
   xNoAir = new double [maxStep+1]; yNoAir = new double [maxStep+1]; zNoAir = new double [maxStep+1];
   for( iStep=1; iStep<=maxStep; iStep++ ) {
 
@@ -77,6 +81,12 @@ int main() {
     xNoAir[iStep] = r1[1] + v1[1]*t;
     yNoAir[iStep] = r1[2] + v1[2]*t;
     zNoAir[iStep] = r1[3] + v1[3]*t - 0.5*grav*t*t;
+    vxplot[iStep] = v[1];   // Record velocity for plot
+    vyplot[iStep] = v[2];
+    vzplot[iStep] = v[3];
+    wxplot[iStep] = w[1];   // Record angular velocity for plot
+    wyplot[iStep] = w[2];
+    wzplot[iStep] = w[3];
   
     //* Calculate the acceleration of the ball 
     double normV = sqrt( v[1]*v[1] + v[2]*v[2] );
@@ -104,6 +114,7 @@ int main() {
     //* If ball reaches table (y<0.75), use conservation of energy to change direction
     if( r[3] < 0.75 )  {
       double v2[3+1], w2[3+1]; 
+      // here I am assuming total conservation of energy.
       v2[1] = v[1]*(1-alpha)/(alpha + 1) - alpha*(1+1)/(alpha + 1)*radius*w[2];
       v2[2] = v[2]*(1-alpha)/(alpha + 1) + alpha/(alpha + 1)*radius*w[1];
       v2[3] = -v[3];
@@ -112,8 +123,6 @@ int main() {
       w2[3] = w[3];
       v[1] = v2[1]; v[2] = v2[2]; v[3]=v2[3];
       w[1] = w2[1]; w[2] = w2[2]; w[3]=w2[3];
-      cout<<"v1"<<v[3]<< endl;
-      cout<< "v2"<<v2[3]<< endl;
 
     } 
 
@@ -122,6 +131,9 @@ int main() {
       xplot[iStep+1] = r[1];  // Record last values computed
 	    yplot[iStep+1] = r[2];
       zplot[iStep+1] = r[3];
+      vxplot[iStep+1] = v[1]; 
+	    vyplot[iStep+1] = v[2];
+      vzplot[iStep+1] = v[3];
       break;                  // Break out of the for loop
     } 
   }
@@ -132,12 +144,20 @@ int main() {
   //* Print out the plotting variables: 
   //    xplot, yplot, xNoAir, yNoAir
   ofstream xplotOut("xplot.txt"), yplotOut("yplot.txt"), zplotOut("zplot.txt"),
-	       xNoAirOut("xNoAir.txt"), yNoAirOut("yNoAir.txt"), zNoAirOut("zNoAir.txt") ;
+	       xNoAirOut("xNoAir.txt"), yNoAirOut("yNoAir.txt"), zNoAirOut("zNoAir.txt"),
+         vxplotOut("vxplot.txt"), vyplotOut("vyplot.txt"), vzplotOut("vzplot.txt"),
+         wxplotOut("wxplot.txt"), wyplotOut("wyplot.txt"), wzplotOut("wzplot.txt");
   int i;
   for( i=1; i<=iStep+1; i++ ) {
     xplotOut << xplot[i] << endl;
     yplotOut << yplot[i] << endl;
     zplotOut << zplot[i] << endl;
+    vxplotOut << vxplot[i] << endl;
+    vyplotOut << vyplot[i] << endl;
+    vzplotOut << vzplot[i] << endl;
+    wxplotOut << wxplot[i] << endl;
+    wyplotOut << wyplot[i] << endl;
+    wzplotOut << wzplot[i] << endl;
   }
   for( i=1; i<=iStep; i++ ) {
     xNoAirOut << xNoAir[i] << endl;
@@ -151,6 +171,12 @@ int main() {
   delete [] xNoAir;
   delete [] yNoAir;
   delete [] zNoAir;
+  delete [] vxplot; 
+  delete [] vyplot;
+  delete [] vzplot;
+  delete [] wxplot; 
+  delete [] wyplot;
+  delete [] wzplot;
   return 0;
 
 }

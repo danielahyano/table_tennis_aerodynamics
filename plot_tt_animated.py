@@ -1,3 +1,12 @@
+'''
+Author: Daniela Yano
+Date: April 2024
+
+This code is designed to plot the results from 
+
+'''
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
@@ -19,20 +28,32 @@ x_plot = readfile("xplot.txt")
 y_plot = readfile("yplot.txt")
 z_plot = readfile("zplot.txt")
 
+wx_plot = readfile("wxplot.txt")
+wy_plot = readfile("wyplot.txt")
+wz_plot = readfile("wzplot.txt")
+
+v = np.array([readfile("vxplot.txt"), 
+            readfile("vyplot.txt"), 
+            readfile("vzplot.txt")])
+v = np.swapaxes(v, 1, 0)
 
 fig, ax = plt.subplots()
 
-scat = ax.scatter(x_plot[0], z_plot[0], c="pink", s=5)
-ax.set(xlim=[-1, 3.7], ylim=[0, 2], xlabel='X [m]', ylabel='Y [m]')
+scat = ax.scatter(x_plot[0], z_plot[0], c="pink", s=5, label=f"|v|: {round(np.linalg.norm(v[0]), 2)} m/s, wx = {wx_plot[0]}, wy = {wy_plot[0]}, wz = {wz_plot[0]}")
+ax.set(xlim=[-1, 3.7], ylim=[0, 2])
+L=plt.legend(loc=1) #Define legend objects
 # ax.legend()
 
 def update(frame):
     # for each frame, update the data stored on each artist.
     x = x_plot[:frame]
     z = z_plot[:frame]
+    lab = f"|v|: {round(np.linalg.norm(v[len(x)]), 2)} m/s, , wx = {wx_plot[len(x)]}, wy = {wy_plot[len(x)]}, wz = {wz_plot[len(x)]}"
+
     # update the scatter plot:
     data = np.stack([x, z]).T
     scat.set_offsets(data)
+    L.get_texts()[0].set_text(lab) #Update label each at frame
     return scat
 
 # set table features
