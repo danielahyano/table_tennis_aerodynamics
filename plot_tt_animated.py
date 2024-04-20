@@ -19,23 +19,23 @@ def readfile(filename):
             x = float(item.split("\n")[0])
             plot_list.append(x)
     
-    return plot_list
+    return np.array(plot_list)
 
 x_plot_noair = readfile("xNoAir.txt")
 y_plot_noair = readfile("yNoAir.txt")
+g = 10
+x_plot = readfile("xplot.txt")[1::g]
+y_plot = readfile("yplot.txt")[1::g]
+z_plot = readfile("zplot.txt")[1::g]
 
-x_plot = readfile("xplot.txt")
-y_plot = readfile("yplot.txt")
-z_plot = readfile("zplot.txt")
-
-wx_plot = readfile("wxplot.txt")
-wy_plot = readfile("wyplot.txt")
-wz_plot = readfile("wzplot.txt")
+wx_plot = readfile("wxplot.txt")[1::g]
+wy_plot = readfile("wyplot.txt")[1::g]
+wz_plot = readfile("wzplot.txt")[1::g]
 
 v = np.array([readfile("vxplot.txt"), 
             readfile("vyplot.txt"), 
             readfile("vzplot.txt")])
-v = np.swapaxes(v, 1, 0)
+v = np.swapaxes(v, 1, 0)[1::g]
 
 fig, ax = plt.subplots()
 
@@ -66,5 +66,10 @@ plt.plot(np.ones(2)*(table_length/2), [table_height, table_height + net_height],
 plt.plot(np.ones(2)*0.1, [0, table_height], color="blue")                                     #set first leg
 plt.plot(np.ones(2)*(table_length-0.1), [0, table_height], color="blue")                      #set second leg
 
-ani = animation.FuncAnimation(fig=fig, func=update, frames=len(x_plot), interval=1)
+ani = animation.FuncAnimation(fig=fig, func=update, frames=len(x_plot), interval=0.1)
+
 plt.show()
+
+# writer = animation.PillowWriter(fps=10,
+#                                  metadata=dict(artist='Me'))
+# ani.save('scatter4.gif', dpi=150,writer=writer)
