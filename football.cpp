@@ -24,18 +24,18 @@ int main() {
   double z1, x1, y1, speed, theta;
   double r1[3+1], v1[3+1], r[3+1], v[3+1], accel[3+1], w[3+1]; 
   // cout << "Enter initial height (meters): "; cin >> y1;
-  x1 = 2.5;
+  x1 = 0;
   y1 = 0;
-  z1 = 1.5;
+  z1 = 0;
   r1[1] = x1;  r1[2] = y1;     r1[3]=z1;// Initial vector position
 
-  v1[1] = -5.5;   // Initial velocity (x)
-  v1[2] = 0;   // Initial velocity (y)
-  v1[3] = -5;  // Initial velocity (z)
+  v1[1] = 20;   // Initial velocity (x)
+  v1[2] = 2.5;   // Initial velocity (y)
+  v1[3] = 4.9;  // Initial velocity (z)
   r[1] = r1[1];  r[2] = r1[2];  r[3]=r1[3]; // Set initial position and velocity
   v[1] = v1[1];  v[2] = v1[2];  v[3]=v1[3];          
   // set initial spin 
-  w[1] = 0; w[2] = 0; w[3]= 0;
+  w[1] = 0; w[2] = 0; w[3]= 46;
 
   //* Set physical parameters (mass, Cd, etc.)
   const double pi = 3.141592654; 
@@ -51,7 +51,7 @@ int main() {
   double vc=12.19; 
   double vs=1.309;
 
-  airFlag = 0;
+  airFlag = 1;
   if( airFlag == 0 )
     rho = 0;      // No air resistance
   else
@@ -64,10 +64,7 @@ int main() {
   magn_v1 = magnitude(v1);
   magn_w = magnitude(w);
   double S = magn_w/(radius*magn_v1);
-  cout << "magn_v1 " <<  magn_v1 << endl;
-  cout << "w[2] " <<  w[2] << endl;
-  cout << "magn_w " << magn_w << endl;
-  cout << "S " << S << endl;
+
   if (S > 0.05){
     Cd = .4127 * pow(S,0.3056);
   }
@@ -75,7 +72,7 @@ int main() {
     Cd = 0.155 + 0.36/(exp((magn_v1-vc)/vs));
   }
 
-  bool bounce = true; // whether the ball kicks or not.
+  bool bounce = false; // whether the ball kicks or not.
   int bounceCount = 0;
   int bounceTime = 0;
 
@@ -127,14 +124,14 @@ int main() {
     double coeff_mag = Cl * area * radius * rho/mass; 
     accel[1] = coeff_drag*normV*v[1];   // Air resistance
     accel[1] += coeff_mag * (w[3]*v[2] - w[2]*v[3]); // Magnus Force
-    // cout << "accel x" << accel[1] << endl;
+
     accel[2] = coeff_drag*normV*v[2];   // Air resistance
     accel[2] += coeff_mag * (w[1]*v[3] - w[3]*v[1]); // Magnus Force
-    // cout << "accel y" << accel[2] << endl;
+
     accel[3] = coeff_drag*normV*v[3];   // Air resistance
     accel[3] += coeff_mag * (w[2]*v[1] - w[1]*v[2]); // Magnus Force
     accel[3] -= grav;                  // Gravity
-    // cout << "accel z" << accel[3] << endl;
+
   
     //* Calculate the new position and velocity using Euler midpoint method
     r[1] += (tau/2)*(2*v[1] + tau*accel[1]);                 // Euler midpoint step
@@ -148,7 +145,7 @@ int main() {
     if( r[3] < 0 && bounce)  {
       
       double diff = iStep - bounceTime;
-      cout << "diff " << diff <<  endl;
+
       if(diff  > 10){
         double v2[3+1], w2[3+1]; 
         bounceTime = iStep;
@@ -165,15 +162,21 @@ int main() {
         w2[3] = w[3];
         v[1] = v2[1]; v[2] = v2[2]; v[3]=v2[3];
         w[1] = w2[1]; w[2] = w2[2]; w[3]=w2[3];
-        cout << "vx: "<<v2[1] << endl;
-        cout << "vz: "<<v2[3] << endl;
-        cout << "z: "<<r[3] << endl;
+
       }
     } 
+    if(r[3] < 0 && !bounce){
+      xplot[iStep+1] = r[1];  // Record last values computed
+	    yplot[iStep+1] = r[2];
+      zplot[iStep+1] = r[3];
+      vxplot[iStep+1] = v[1]; 
+	    vyplot[iStep+1] = v[2];
+      vzplot[iStep+1] = v[3];
+      break;        
+    }
 
-    //* If ball reaches end of the table (x>3), break
+    //* If ball reaches bounces too many times, break
     if( bounceCount > 5)  {
-      cout << "END "<< bounceCount << endl;
       xplot[iStep+1] = r[1];  // Record last values computed
 	    yplot[iStep+1] = r[2];
       zplot[iStep+1] = r[3];
