@@ -11,7 +11,6 @@ Milestones:
 - [X] Simulation of flight in 2D (with topspin and backspin)
 - [X] Simulation of flight trajectory in 3D
 - [X] Simulation of flight trajectory in 3D with sidespin, topspin and backspin
-- [ ] Make modifications to the bounce, taking into account the dissipation of energy in form of heat and sound. 
 
 - Next steps:
  - Adapt so that you can run the code for different sports (just changing parameters, but making it automated)
@@ -25,4 +24,4 @@ Steps to run the program:
 3. To plot you can use one of my three python programs:
 'plot_tt_animated.py' which is an animation that shows the plot in z-x axis
 'plot_tt_up_vision.py' which is an animation from the "up" vision
-and 'plot_tt.py' which is a simple plot to see the trajectory!.
+and 'plot_2d.py' which is a simple plot to see the trajectory in 2d and plot_3d.py which is a 3d plot!.

@@ -22,23 +22,27 @@ int main() {
   double z1, x1, y1, speed, theta;
   double r1[3+1], v1[3+1], r[3+1], v[3+1], accel[3+1], w[3+1]; 
   // cout << "Enter initial height (meters): "; cin >> y1;
+
   x1 = -.1;
-  y1 = 0.5;
+  y1 = -1;
   z1 = 0.9;
   r1[1] = x1;  r1[2] = y1;     r1[3]=z1;// Initial vector position
   // cout << "Enter initial speed (m/s): "; cin >> speed; 
-  speed = 10;
+  speed = 10.5;
   // cout << "Enter initial angle (degrees): "; cin >> theta;
-  theta = -15;
+  theta = 10+90;
+  double phi = 90;
   const double pi = 3.141592654; 
-  double rps = -30;
-  v1[1] = speed*cos(theta*pi/180);   // Initial velocity (x)
-  v1[2] = 0;   // Initial velocity (y)
-  v1[3] = speed*sin(theta*pi/180);
+  
+  v1[1] = speed*sin(theta*pi/180)*sin(phi*pi/180);   // Initial velocity (x)
+  v1[2] = speed*sin(theta*pi/180)*cos(phi*pi/180);   // Initial velocity (y)
+  v1[3] = speed*cos(theta*pi/180);
   r[1] = r1[1];  r[2] = r1[2];  r[3]=r1[3]; // Set initial position and velocity
   v[1] = v1[1];  v[2] = v1[2];  v[3]=v1[3];          
   // set initial spin 
-  w[1] = 0; w[2] = rps*2*pi; w[3]= 0;
+  double rps = 20;
+  double w_mag = rps*2*pi;
+  w[1] = 0 ; w[2] = 0; w[3]= w_mag;
 
   //* Set physical parameters (mass, Cd, etc.)
   double Cd = 0;      // Drag coefficient (dimensionless)
@@ -70,10 +74,7 @@ int main() {
   magn_v1 = magnitude(v1);
   magn_w = magnitude(w);
   double S = magn_w/(radius*magn_v1);
-  cout << "magn_v1 " <<  magn_v1 << endl;
-  cout << "w[2] " <<  w[2] << endl;
-  cout << "magn_w " << magn_w << endl;
-  cout << "S " << S << endl;
+
   if (S > 0.05){
     magn_v = magnitude(v);
     Cd = .4127 * pow(S, 0.3056);
@@ -125,24 +126,16 @@ int main() {
     else{
       Cd = 0.155 + 0.36/(exp((magn_v1-vc)/vs));
     }
-    // Cd= 0.155;
-    // cout << "Cd " << Cd  << endl;
 
     double coeff_drag = -(Cd*area*rho)/(2*mass);
     double coeff_mag = Cl * area * radius * rho/mass; 
-    // cout << "coeff_drag " << coeff_drag << endl;
-    // cout << Cd << endl;
-    // cout << "coeff_mag " << coeff_mag << endl;
     accel[1] = coeff_drag*normV*v[1];   // Air resistance
     accel[1] += coeff_mag * (w[3]*v[2] - w[2]*v[3]); // Magnus Force
-    // cout << "accel x" << accel[1] << endl;
     accel[2] = coeff_drag*normV*v[2];   // Air resistance
     accel[2] += coeff_mag * (w[1]*v[3] - w[3]*v[1]); // Magnus Force
-    // cout << "accel y" << accel[2] << endl;
     accel[3] = coeff_drag*normV*v[3];   // Air resistance
     accel[3] += coeff_mag * (w[2]*v[1] - w[1]*v[2]); // Magnus Force
     accel[3] -= grav;                  // Gravity
-    // cout << "accel z" << accel[3] << endl;
   
   
     //* Calculate the new position and velocity using Euler method
@@ -156,11 +149,9 @@ int main() {
     //* If ball reaches table (y<0.75), use conservation of energy to change direction
     if( r[3] < 0.75 && r[1] < 2.7)  {
       double diff = iStep - bounceTime;
-      cout << "diff " << diff <<  endl;
       if(diff  > 10){
         double v2[3+1], w2[3+1]; 
         bounceTime = iStep;
-        // here I am assuming total conservation of energy.
         double ex = -1; //-1 corresponds to frictionless gliding
         double ey = -1; //-1 corresponds to frictionless gliding
         double ez = 0.9;
@@ -172,9 +163,6 @@ int main() {
         w2[3] = w[3];
         v[1] = v2[1]; v[2] = v2[2]; v[3]=v2[3];
         w[1] = w2[1]; w[2] = w2[2]; w[3]=w2[3];
-        cout << "vx: "<<v2[1] << endl;
-        cout << "vz: "<<v2[3] << endl;
-        cout << "z: "<<r[3] << endl;
       }
 
     } 
@@ -194,8 +182,7 @@ int main() {
   //* Print maximum range and time of flight
   cout << "Time of flight is " << iStep*tau << " seconds" << endl;
 
-  //* Print out the plotting variables: 
-  //    xplot, yplot, xNoAir, yNoAir
+  //* Print out the plotting variables:   
   ofstream xplotOut("xplot.txt"), yplotOut("yplot.txt"), zplotOut("zplot.txt"),
 	       xNoAirOut("xNoAir.txt"), yNoAirOut("yNoAir.txt"), zNoAirOut("zNoAir.txt"),
          vxplotOut("vxplot.txt"), vyplotOut("vyplot.txt"), vzplotOut("vzplot.txt"),
