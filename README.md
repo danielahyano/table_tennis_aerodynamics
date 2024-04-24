@@ -12,15 +12,12 @@ Milestones:
 - [X] Simulation of flight trajectory in 3D
 - [X] Simulation of flight trajectory in 3D with sidespin, topspin and backspin
 
-- Next steps:
- - Adapt so that you can run the code for different sports (just changing parameters, but making it automated)
- - Compare results with data to check if code looks good
-
 Steps to run the program:
 1. Compile:
 'g++ -o myprog balle.cpp'
 2. Run the program:
 './myprog '
+the program will produce txt files with the trajectory and velocities details. You can use the python files here to plot those trajectories!
 3. To plot you can use one of my three python programs:
 'plot_tt_animated.py' which is an animation that shows the plot in z-x axis
 'plot_tt_up_vision.py' which is an animation from the "up" vision
