@@ -24,23 +24,26 @@ int main() {
   // cout << "Enter initial height (meters): "; cin >> y1;
 
   x1 = -.1;
-  y1 = -1;
+  y1 = -1.5;
   z1 = 0.9;
   r1[1] = x1;  r1[2] = y1;     r1[3]=z1;// Initial vector position
   // cout << "Enter initial speed (m/s): "; cin >> speed; 
-  speed = 10.5;
+  speed = 10;
   // cout << "Enter initial angle (degrees): "; cin >> theta;
-  theta = 10+90;
+  theta = 20+90;
   double phi = 90;
   const double pi = 3.141592654; 
   
   v1[1] = speed*sin(theta*pi/180)*sin(phi*pi/180);   // Initial velocity (x)
   v1[2] = speed*sin(theta*pi/180)*cos(phi*pi/180);   // Initial velocity (y)
   v1[3] = speed*cos(theta*pi/180);
+  cout << "v1" << v1[1] << endl;
+  cout << "v2" << v1[2] << endl;
+  cout << "v3" << v1[3] << endl;
   r[1] = r1[1];  r[2] = r1[2];  r[3]=r1[3]; // Set initial position and velocity
   v[1] = v1[1];  v[2] = v1[2];  v[3]=v1[3];          
   // set initial spin 
-  double rps = 20;
+  double rps = 0;
   double w_mag = rps*2*pi;
   w[1] = 0 ; w[2] = 0; w[3]= w_mag;
 
@@ -138,10 +141,10 @@ int main() {
     accel[3] -= grav;                  // Gravity
   
   
-    //* Calculate the new position and velocity using Euler method
-    r[1] += tau*v[1];                 // Euler step
-    r[2] += tau*v[2]; 
-    r[3] += tau*v[3];            
+    //* Calculate the new position and velocity using Euler midpoint method
+    r[1] += (tau/2)*(2*v[1] + tau*accel[1]);                 // Euler midpoint step
+    r[2] += (tau/2)*(2*v[2] + tau*accel[2]); 
+    r[3] += (tau/2)*(2*v[3] + tau*accel[3]);            
     v[1] += tau*accel[1];     
     v[2] += tau*accel[2];     
     v[3] += tau*accel[3];

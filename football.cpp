@@ -136,10 +136,10 @@ int main() {
     accel[3] -= grav;                  // Gravity
     // cout << "accel z" << accel[3] << endl;
   
-    //* Calculate the new position and velocity using Euler method
-    r[1] += tau*v[1];                 // Euler step
-    r[2] += tau*v[2]; 
-    r[3] += tau*v[3];            
+    //* Calculate the new position and velocity using Euler midpoint method
+    r[1] += (tau/2)*(2*v[1] + tau*accel[1]);                 // Euler midpoint step
+    r[2] += (tau/2)*(2*v[2] + tau*accel[2]); 
+    r[3] += (tau/2)*(2*v[3] + tau*accel[3]);             
     v[1] += tau*accel[1];     
     v[2] += tau*accel[2];     
     v[3] += tau*accel[3];
